@@ -25,7 +25,7 @@ def getOpts():
                         help='custom run number for this run')
     parser.add_argument('--dataDir',
                         type=str,
-                        default='/home/daq/test-data/raw/',
+                        default='data/raw/',
                         help='directory for the output data')
     return parser.parse_args()
 

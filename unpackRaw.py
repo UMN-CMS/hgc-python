@@ -15,11 +15,11 @@ def getOpts():
                         help='file to unpack')
     parser.add_argument('--rawDir',
                         type=str,
-                        default='/home/daq/test-data/raw/',
+                        default='data/raw/',
                         help='directory to look for the raw data')
     parser.add_argument('--unpackDir',
                         type=str,
-                        default='/home/daq/test-data/unpacked/',
+                        default='data/unpacked/',
                         help='directory for the output data')
     parser.add_argument('--keepTime',
                         type=bool,
