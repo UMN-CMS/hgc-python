@@ -136,8 +136,8 @@ if __name__ == '__main__':
             for ski in range(4):
                 # fill channel ADC data
                 for sca in range(13): # loop over sca first for a better memory access pattern (in theory)
-                    for chan in range(0,64,2): # only even channels are connected
-                        # channel 64 comes out of the hexbd first, so we use 63-chan to fill the arrays
+                    for chan in range(1,64,2): # only even channels are connected (loop over odds, because they are flipped in the fifo array)
+                        # channel 64 comes out of the hexbd first, so we use 63-chan to fill the arrays (same reason as range(1,64,2) above)
                         eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['lg_adc'][sca] = skiWords12BitBinary[ski][sca*2*64+0*64+chan]
                         eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['lg_adc_hit'] = skiWordsHitBit[ski][sca*2*64+0*64+chan]
                         eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['lg_adc'][sca] = skiWords12BitBinary[ski][sca*2*64+1*64+chan]
@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
                 # fill channel TOT/TOA data
                 offset = 13*2*64
-                for chan in range(0,64,2):
+                for chan in range(1,64,2):
                     eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['toa_fall'] = skiWords12BitBinary[ski][offset+chan]
                     eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['toa_fall_hit'] = skiWordsHitBit[ski][offset+chan]
                     eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['toa_rise'] = skiWords12BitBinary[ski][offset+64+chan]
