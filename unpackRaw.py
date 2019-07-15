@@ -65,7 +65,7 @@ chanType = np.dtype([
         ('tot_fast', 'u2'), ('tot_fast_hit', '?'),
     ])
 chipType = np.dtype([
-        ('chan', chanType, (32,)),
+        ('chan', chanType, (64,)),
         ('roll_position', 'u2'),
         ('global_ts', 'u4'),
         ('chip_id', 'u1'),
