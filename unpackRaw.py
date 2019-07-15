@@ -65,7 +65,7 @@ chanType = np.dtype([
         ('tot_fast', 'u2'), ('tot_fast_hit', '?'),
     ])
 chipType = np.dtype([
-        ('chan', chanType, (64,)),
+        ('chan', chanType, (32,)),
         ('roll_position', 'u2'),
         ('global_ts', 'u4'),
         ('chip_id', 'u1'),
@@ -115,7 +115,7 @@ if __name__ == '__main__':
         for hxidx,hx in enumerate(hexbds):
             # set the hexbd index
             eventData[evidx]['hexbd'][hxidx]['index'] = hx
-           
+
             # get the data from the hexbd we want
             hxData = ((block>>hx) & 0xf)[1:] # drop the header
 
@@ -136,7 +136,8 @@ if __name__ == '__main__':
             for ski in range(4):
                 # fill channel ADC data
                 for sca in range(13): # loop over sca first for a better memory access pattern (in theory)
-                    for chan in range(64):
+                    for chan in range(0,64,2): # only even channels are connected
+                        # channel 64 comes out of the hexbd first, so we use 63-chan to fill the arrays
                         eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['lg_adc'][sca] = skiWords12BitBinary[ski][sca*2*64+0*64+chan]
                         eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['lg_adc_hit'] = skiWordsHitBit[ski][sca*2*64+0*64+chan]
                         eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['lg_adc'][sca] = skiWords12BitBinary[ski][sca*2*64+1*64+chan]
@@ -144,7 +145,7 @@ if __name__ == '__main__':
 
                 # fill channel TOT/TOA data
                 offset = 13*2*64
-                for chan in range(64):
+                for chan in range(0,64,2):
                     eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['toa_fall'] = skiWords12BitBinary[ski][offset+chan]
                     eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['toa_fall_hit'] = skiWordsHitBit[ski][offset+chan]
                     eventData[evidx]['hexbd'][hxidx]['chip'][ski]['chan'][63-chan]['toa_rise'] = skiWords12BitBinary[ski][offset+64+chan]
