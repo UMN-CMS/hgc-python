@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # file setup
     rawFileName = args.rawDir+args.fileName
     print('Raw File: {0}'.format(rawFileName))
-    rawFile = h5py.File(args.rawDir+args.fileName,'r')
+    rawFile = h5py.File(rawFileName,'r')
     outFileName = makeOutFileName(args.unpackDir,args.fileName,args.keepTime)
     print('Unpacked File: {0}'.format(outFileName))
     unpackedFile = h5py.File(outFileName,'w')
