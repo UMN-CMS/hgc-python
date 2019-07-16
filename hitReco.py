@@ -24,11 +24,11 @@ def getOpts():
                         help='directory for the output data')
     parser.add_argument('--eMap',
                         type=str,
-                        default='',
+                        default='extern/hgcal-tb-emaps/json_emaps/cosmicstand_2layer.emap.txt',
                         help='path to the electronic map')
     parser.add_argument('--layerDistances',
                         type=str,
-                        default='',
+                        default='extern/hgcal-tb-emaps/json_emaps/cosmicstand_2layer_layer_distances.txt',
                         help='path to the layer distances file')
     return parser.parse_args()
 
@@ -62,19 +62,74 @@ def getSCAConversion(rollMask):
 
 
 # emap generation
-# emap datatype
 emapType = np.dtype([
-        ('x','f'),
-        ('y','f'),
-        ('z','f'),
         ('iu','i'),
         ('iv','i'),
         ('iU','i'),
         ('iV','i'),
+        ('x','f'),
+        ('y','f'),
+        ('z','f'),
+        ('type','i'),
     ])
 
-def createEmap(fileName):
-    pass
+def uvToXY(iu,iv,iU,iV):
+
+    a = 0.6496345 # Size in terms of 1 unit of x/y co-ordinates of a cell side which is 0.064 cm
+    A = 11*a # One side of a full sensor(neglecting the cut at the MB)
+    x_a = np.sqrt(3) / 2 # cosine pi/6
+    y_a = 1 / 2. # sine pi/6
+    vy_a = 3. / 2
+
+    # Translation in u,v co-ordinates in terms of TB cartesian -x,y.
+    x0 = 2 * x_a * a #Translation in Cartesian x for 1 unit of iu
+    vx0 = x_a * a # Cartesian x component of translation for 1 unit of iv
+    vy0 = vy_a * a # Cartesian y component of translation for 1 unit of iv
+    # Translation in Sensor_u, Sensor_v co-ordinates in terms of TB cartesian -x,y.
+    X0 = 2 * x_a * A #Translation in Cartesian x for 1 unit of Sensor_iu
+    VX0 = x_a * A # Cartesian x component of translation for 1 unit of Sensor_iv
+    VY0 = vy_a * A
+
+    # x,y within the sensor
+    x = iu * x0 + iv * vx0
+    y = iv * vy0
+
+    # sensor offsets
+    x += iU*X0 + iV*VX0
+    y += iV*VY0
+
+    return x,y
+
+def createEMap(emapName,layDistName):
+    # read layer distances
+    layerDistances = np.loadtxt(layDistName, delimiter=',', skiprows=1, unpack=True, usecols=1)
+
+    # create emap array
+    nLayers = len(layerDistances)
+    nPadsPerLayer = 4*32
+    emap = np.zeros(nLayers*nPadsPerLayer,dtype=emapType)
+
+    # fill z values
+    for lidx in range(nLayers):
+        emap[:(lidx+1)*nPadsPerLayer]['z'] = layerDistances[lidx]
+
+    # get iu,iv,iU,iV values from emap file and generate x,y
+    with open(emapName,'r') as ef:
+        for line in ef:
+            if 'CHIP' in line: continue
+            chip,chan,lay,iU,iV,iu,iv,typ = [int(x) for x in line.split()]
+            chipidx = chip-1
+            hxidx = lay-1
+            x,y = uvToXY(iu,iv,iU,iV)
+            arrIdx = hxidx*nPadsPerLayer + chipidx*32 + chan//2
+            emap[arrIdx]['iu'] = iu
+            emap[arrIdx]['iv'] = iu
+            emap[arrIdx]['iU'] = iU
+            emap[arrIdx]['iV'] = iV
+            emap[arrIdx]['x'] = x
+            emap[arrIdx]['y'] = y
+
+    return emap
 
 
 # very basic hit selection
@@ -127,7 +182,8 @@ if __name__ == '__main__':
     nPads = nHexbds*4*32 # 32 (active) channels per chip, 4 chips per hexbd
 
     # read the emap
-    emap = np.zeros(nPads, dtype=emapType)
+    emap = createEMap(args.eMap,args.layerDistances)
+    # emap = np.zeros(nPads, dtype=emapType)
 
     # fill the event reco array
     eventRecoData = np.zeros(len(unpackedData), dtype=eventRecoType)
