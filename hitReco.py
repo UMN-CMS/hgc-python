@@ -190,8 +190,8 @@ if __name__ == '__main__':
     for evidx,event in enumerate(tqdm.tqdm(unpackedData)):
 
         # calculate common mode noise for the hexaboards
-        lgCommonMode = np.zeros((nHexbds,11), dtype=float)
-        hgCommonMode = np.zeros((nHexbds,11), dtype=float)
+        lgCommonMode = np.zeros(nHexbds, dtype=float)
+        hgCommonMode = np.zeros(nHexbds, dtype=float)
         for hxidx,hexbd in enumerate(event['hexbd']):
             nChans = 0
             for chipidx,chip in enumerate(hexbd['chip']):
@@ -201,8 +201,8 @@ if __name__ == '__main__':
                     lgADCTS = chan['lg_adc'][scaToTS][:11] # only have 11 time samples
                     hgADCTS = chan['hg_adc'][scaToTS][:11]
 
-                    lgCommonMode[hxidx] += lgADCTS
-                    hgCommonMode[hxidx] += hgADCTS
+                    lgCommonMode[hxidx] += lgADCTS[0] # use first time sample for CM calculation
+                    hgCommonMode[hxidx] += hgADCTS[0]
                     nChans += 1
             lgCommonMode[hxidx] /= nChans
             hgCommonMode[hxidx] /= nChans
