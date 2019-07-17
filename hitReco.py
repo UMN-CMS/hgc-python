@@ -24,11 +24,11 @@ def getOpts():
                         help='directory for the output data')
     parser.add_argument('--eMap',
                         type=str,
-                        default='extern/hgcal-tb-emaps/json_emaps/cosmicstand_2layer.emap.txt',
+                        default='extern/HGCAL-TB-emaps/json_emaps/cosmicstand_2layer.emap.txt',
                         help='path to the electronic map')
     parser.add_argument('--layerDistances',
                         type=str,
-                        default='extern/hgcal-tb-emaps/json_emaps/cosmicstand_2layer_layer_distances.txt',
+                        default='extern/HGCAL-TB-emaps/json_emaps/cosmicstand_2layer_layer_distances.txt',
                         help='path to the layer distances file')
     return parser.parse_args()
 
