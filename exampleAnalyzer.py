@@ -28,5 +28,5 @@ xvals = np.concatenate(xvals)
 # make the 2d histogram
 fig,ax = plt.subplots(figsize=(8,6))
 ax.hist2d(xvals,yvals,cmin=1,bins=(11,100))
-ax.set(xlabel='Time Sample',ylabel='Low Gain ADC',title='Run 1')
-plt.savefig('run1_waveforms.pdf')
+ax.set(xlabel='Time Sample',ylabel='ADC$_{LG}$ - CM$_{LG}$',title='Run 1')
+plt.savefig('run1_waveforms.png')
