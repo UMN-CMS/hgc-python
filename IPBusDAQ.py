@@ -120,7 +120,7 @@ if __name__ == '__main__':
     skiMask = rdout.getSkirocMask()
     rawFile.attrs['skiroc_mask'] = skiMask
     rawFile.attrs['start_time'] = str(datetime.datetime.now())
-    eventData = rawFile.create_group('event_data')
+    eventData = rawFile.create_group('raw_events')
 
     # event loop
     prevClockCount = np.uint64(0)
@@ -166,6 +166,6 @@ if __name__ == '__main__':
 
     # closing actions
     rawFile.attrs['end_time'] = str(datetime.datetime.now())
-    rawFile.attrs['nevents'] = max([int(x) for x in list(rawFile['event_data'].keys())])+1
+    rawFile.attrs['nevents'] = max([int(x) for x in list(rawFile['raw_events'].keys())])+1
     rawFile.attrs['error'] = error
     rawFile.close()

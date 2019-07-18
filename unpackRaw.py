@@ -108,7 +108,7 @@ if __name__ == '__main__':
     for evidx in tqdm.trange(rawFile.attrs['nevents']):
 
         # read the block from file
-        block = np.array(rawFile['/event_data/{0}'.format(evidx)],dtype=np.uint32)
+        block = np.array(rawFile['/raw_events/{0}'.format(evidx)],dtype=np.uint32)
 
         # unpack hexaboard data into the bitstreams from each skiroc
         # each skiroc should produce an array of 1924 16-bit words
@@ -163,5 +163,5 @@ if __name__ == '__main__':
     rawFile.close()
 
     # save the unpacked data to a compressed hdf5 file
-    eventDataset = unpackedFile.create_dataset('event_data', data=eventData, compression='gzip')
+    eventDataset = unpackedFile.create_dataset('unpacked_events', data=eventData, compression='gzip')
     unpackedFile.close()

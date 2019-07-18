@@ -177,7 +177,7 @@ if __name__ == '__main__':
     print('Reco File: {0}.npz'.format(outFileName))
 
     # read the data from the input file
-    unpackedData = np.array(unpackedFile['event_data'])
+    unpackedData = np.array(unpackedFile['unpacked_events'])
     nHexbds = len(unpackedData[0]['hexbd'])
     nPads = nHexbds*4*32 # 32 (active) channels per chip, 4 chips per hexbd
 
@@ -274,7 +274,7 @@ if __name__ == '__main__':
                     hitIdx += 1
 
     # create output file and write dataset to it
-    np.savez_compressed(outFileName, event_data=eventRecoData, allow_pickle=True)
+    np.savez_compressed(outFileName, reco_events=eventRecoData, allow_pickle=True)
 
     # close input files
     unpackedFile.close()
